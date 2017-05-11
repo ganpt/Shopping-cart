@@ -1,0 +1,9 @@
+.thumbnail img{
+  max-height: 150px;
+}
+.thumbnail .caption .description {
+  color: #7f7f7f;
+}
+body{
+  padding-top: 70px;
+}
