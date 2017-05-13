@@ -4,10 +4,52 @@ var csrf=require('csurf');
 var bcrypt=require('bcryptjs');
 var Product=require('../models/product');
 var User=require('../models/user')
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 var router = express.Router();
 //console.log("hi");
 router.use(csrf());
-router.get('/',function (req,res,next) {
+//middleware which can be added on any page which requires authentication 
+/*function ensureAuthenticated(req, res, next){
+	if(req.isAuthenticated()){
+		return next();
+	} else {
+		//req.flash('error_msg','You are not logged in');
+		res.redirect('user/signin');
+	}
+};*/
+
+passport.serializeUser(function (user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(function (id, done) {
+    User.findById(id, function (err, user) {
+        done(err, user);
+    });
+});
+passport.use(new LocalStrategy({
+  usernameField: 'email',
+  passwordField: 'password'
+},function(email, password, done) {
+    User.findOne({'email': email}, function (err, user) {
+        if (err) {
+            return done(err);
+        }
+        if (!user) {
+            return done(null, false);
+        }
+        bcrypt.compare(password,user.password,function(err, isMatch){
+          if(err) throw err;
+           if(!isMatch)
+           return done(null,false);
+         else
+        return done(null, user);
+    });
+  });
+}));
+
+router.get('/',ensureAuthenticated,function (req,res,next) {
   //console.log(req.csrfToken());
   Product.find(function(err,docs) {
     if(err)
@@ -54,5 +96,12 @@ router.post('/user/signup',function (req,res) {
     });
 });
 });
-
+router.get('/user/signin',function(req,res){
+  res.render('user/signin',{title:'Shopping cart',csrfToken:req.csrfToken()});
+})
+router.post('/user/signin',
+passport.authenticate('local', {successRedirect:'/', failureRedirect:'/user/signin'}),
+function(req, res) {
+  res.redirect('/');
+});
 module.exports=router;
