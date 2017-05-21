@@ -1,3 +1,8 @@
+<%if (message.length>0) { %>
+  <div class="alert alert-danger">
+        <%= message %>
+  </div>
+  <% } %>
 <% products.forEach(function(product){ %>
     <div class="row container">
       <% product.forEach(function(item){ %>
