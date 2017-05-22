@@ -5,5 +5,10 @@
   color: #7f7f7f;
 }
 body{
-  padding-top: 70px;
+  padding-top: 100px;
+}
+.left-right-margin{
+
+  margin-left: 280px;
+  margin-right: 280px;
 }
