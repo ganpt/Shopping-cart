@@ -4,12 +4,14 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var expressLayouts = require('express-ejs-layouts');
-var routes = require('./routes/index');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash=require('connect-flash');
 var expressValidator = require('express-validator');
 var LocalStrategy = require('passport-local').Strategy;
+var routes = require('./routes/index');
+var userRoutes = require('./routes/user');
+
 mongoose.connect('mongodb://localhost/ShoppingOwn');
 var app = express();
 //app.set('views', path.join(__dirname, 'views'));
@@ -29,7 +31,12 @@ app.use(expressLayouts);
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-app.use('/', routes);
+app.use(function(req,res,next){
+   res.locals.login=req.isAuthenticated();
+   next();
+});
+app.use('/user',userRoutes);
+app.use('/',routes);
 app.listen(3000, function() {
   console.log("server listening at port 3000")
 });
