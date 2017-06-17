@@ -8,6 +8,22 @@
       <li class="active"><a href="/">Home</a></li>
     </ul>
       <ul class="nav navbar-nav navbar-right">
+        <li>
+        <a href="/shopping-cart/">
+            <i class="fa fa-shopping-cart" aria-hidden="true"></i> Shopping Cart
+            <span class="badge">
+              <%if(session.cart) {%>
+                <% var totalQuantity=0 %>
+                <%session.cart.forEach(function(item){ %>
+                  <% totalQuantity+=item.quantity %>
+                  <% }); %>
+                  <%=totalQuantity%>
+                <%} else {%>
+                  0
+                <%}%>
+            </span>
+        </a>
+        <li>
       <%  if(login) { %>
         <li><a href="/user/profile"> User Account</a></li>
         <li><a href="/user/logout"> Logout</a></li>

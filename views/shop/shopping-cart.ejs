@@ -1,0 +1,40 @@
+<%  if(products) { %>
+  <div class="row">
+    <div class="col-sm-6 col-md-6 col-md-offset-3 col-sm-offset-3">
+      <ul class="list-group">
+        <% products.forEach(function(item){ %>
+          <li class="list-group-item">
+            <span class="badge"><%= item.quantity %></span>
+            <strong><%= item.title %></strong>
+            <span class="label label-success">$<%= item.price %></span>
+            <div class="btn-group">
+              <button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-toggle="dropdown">Action <span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li><a href="/reduce/<%= item.id %>">Reduce by 1</a></li>
+                <li><a href="/remove/<%= item.id %>">Remove All</a></li>
+              </ul>
+            </div>
+          </li>
+          <% }); %>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6 col-md-6 col-md-offset-3 col-sm-offset-3">
+      <p><strong>TotalQuantity:<%=totalQuantity%> </strong></p>
+      <p><strong>TotalPrice:$<%=totalPrice%> </strong></p>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-sm-6 col-md-6 col-md-offset-3 col-sm-offset-3">
+      <a href="/checkout" type="button" class="btn btn-success">Checkout</a>
+    </div>
+  </div>
+  <% } else{ %>
+    <div class="row">
+      <div class="col-sm-6 col-md-6 col-md-offset-3 col-sm-offset-3">
+        <h2>No Items in Cart</h2>
+      </div>
+    </div>
+    <%}%>
