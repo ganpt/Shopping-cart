@@ -4,39 +4,48 @@ var bcrypt = require('bcryptjs');
 var User = require('../models/user')
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var Order = require('../models/order');
 var router = express.Router();
 //console.log("hi");
 router.use(csrf());
 
-function noAuthenticationRequired(req, res, next){
-	if(!req.isAuthenticated()){
-		return next();
-	} else {
-		res.redirect('/');
-	}
+function noAuthenticationRequired(req, res, next) {
+  if (!req.isAuthenticated()) {
+    return next();
+  } else {
+    res.redirect('/');
+  }
 };
 //middleware which can be added on any page which requires authentication
-function ensureAuthenticated(req, res, next){
-	if(req.isAuthenticated()){
-		return next();
-	} else {;
-		res.redirect('/user/signin');
-	}
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  } else {;
+    res.redirect('/user/signin');
+  }
 };
 
-router.get('/profile',ensureAuthenticated,function(req, res) {
+router.get('/profile', ensureAuthenticated, function(req, res) {
+  Order.find({
+    user: req.user
+  }, function(err, orders) {
+    if (err) {
+      return res.write('Error!');
+    }
     res.render('user/profile', {
+      orders: orders,
       title: 'Shopping cart'
     });
   });
+});
 
-router.get('/logout',function (req,res,next) {
-    req.logout();
-    res.redirect('/');
-  })
+router.get('/logout', function(req, res, next) {
+  req.logout();
+  res.redirect('/');
+})
 
-  // both /profile and /logout routes are placed above  noAuthenticationRequired  because both of them requires authentication
-router.use('/',noAuthenticationRequired,function(req,res,next){
+// both /profile and /logout routes are placed above  noAuthenticationRequired  because both of them requires authentication
+router.use('/', noAuthenticationRequired, function(req, res, next) {
   next();
 })
 passport.serializeUser(function(user, done) {
@@ -97,8 +106,8 @@ router.post('/signup', function(req, res) {
   req.checkBody('password', ' Password is required ').notEmpty();
 
   req.getValidationResult().then(function(result) {
-     if (!result.isEmpty()) {
-    var errors = result.useFirstErrorOnly().array();
+    if (!result.isEmpty()) {
+      var errors = result.useFirstErrorOnly().array();
       var messages = [];
       errors.forEach(function(error) {
         messages.push(error.msg);
@@ -131,14 +140,20 @@ router.post('/signup', function(req, res) {
                 messages: req.flash('message')
               });
             } else {
-              req.flash('message', 'Registered Successfully');
-              res.redirect('/');
+              if (req.session.oldUrl) {
+                var oldUrl = req.session.oldUrl;
+                req.session.oldUrl = null;
+                res.redirect(oldUrl);
+              } else {
+                req.flash('message', 'Registered Successfully');
+                res.redirect('/');
+              }
             }
           })
         });
       });
     }
-});
+  });
 });
 router.get('/signin', function(req, res) {
   res.render('user/signin', {
@@ -149,9 +164,17 @@ router.get('/signin', function(req, res) {
 })
 router.post('/signin',
   passport.authenticate('local', {
-    successRedirect: '/user/profile',
     failureFlash: true,
     failureRedirect: '/user/signin'
-  }));
+  }),
+  function(req, res, next) {
+    if (req.session.oldUrl) {
+      var oldUrl = req.session.oldUrl;
+      req.session.oldUrl = null;
+      res.redirect(oldUrl);
+    } else {
+      res.redirect('/user/profile');
+    }
+  });
 
 module.exports = router;

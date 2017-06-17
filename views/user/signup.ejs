@@ -1,32 +1,32 @@
 <div class="row">
-    <div class="col-md-4 col-md-offset-4">
-      <%if (messages.length>0) { %>
+  <div class="col-md-4 col-md-offset-4">
+    <%if (messages.length>0) { %>
       <%  messages.forEach(function(message){ %>
         <div class="alert alert-danger ">
-              <%= message %>
+          <%= message %>
         </div>
         <% }); %>
-        <% } %>
-        <h1>Sign Up </h1>
-        <form action="/user/signup" method="post">
-          <input type="hidden" name="_csrf" value="<%=csrfToken %>"/>
-          <div class="form-group">
-              <label for="firstName">First Name</label>
-              <input type="text" id="firstName" name="firstName" class="form-control">
-          </div>
-          <div class="form-group">
-              <label for="lastName">Last Name</label>
-              <input type="text" id="lastName" name="lastName" class="form-control">
-          </div>
-            <div class="form-group">
+          <% } %>
+            <h1>Sign Up </h1>
+            <form action="/user/signup" method="post">
+              <input type="hidden" name="_csrf" value="<%=csrfToken %>" />
+              <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" class="form-control">
+              </div>
+              <div class="form-group">
                 <label for="email">E-Mail</label>
                 <input type="text" id="email" name="email" class="form-control">
-            </div>
-            <div class="form-group">
+              </div>
+              <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" class="form-control">
-            </div>
-            <button type="submit" class="btn btn-primary">Sign Up</button>
-        </form>
-    </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Sign Up</button>
+            </form>
+  </div>
 </div>

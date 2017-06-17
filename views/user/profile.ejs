@@ -1,10 +1,27 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
     <h1>User Profile</h1>
-  </body>
-</html>
+    <hr>
+    <h2>My Orders</h2>
+    <%orders.forEach(function(order){ %>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <ul class="list-group">
+            <%var totalPrice=0 %>
+              <%order.cart.forEach(function(item) { %>
+                <li class="list-group-item">
+                  <span class="badge"><%=item.price %></span>
+                  <%=item.title %> |
+                    <%=item.quantity%> Units
+                </li>
+                <%totalPrice+=item.price%>
+                  <% }); %>
+          </ul>
+        </div>
+        <div class="panel-footer">
+          <strong>Total Price: $<%=totalPrice%></strong>
+        </div>
+      </div>
+      <% }); %>
+  </div>
+</div>
